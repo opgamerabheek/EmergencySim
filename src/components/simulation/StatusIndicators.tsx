@@ -9,23 +9,18 @@ interface StatusIndicatorsProps {
   phase: SimulationPhase;
 }
 
-const formatTime = (seconds: number): string => {
-  const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
-  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-};
-
 const smokeLabel = (level: number): { text: string; color: string } => {
-  if (level < 0.15) return { text: 'Clear', color: '#3F4826' };
-  if (level < 0.4) return { text: 'Light', color: '#515C32' };
-  if (level < 0.65) return { text: 'Moderate', color: '#515C32' };
-  return { text: 'Heavy', color: '#30371D' };
+  if (level < 0.15) return { text: 'Clear', color: '#A9C46C' };
+  if (level < 0.4) return { text: 'Bad', color: '#F5B416' };
+  if (level < 0.65) return { text: 'Worse', color: '#FF7043' };
+  return { text: 'Critical', color: '#8F1D14' };
 };
 
 const visLabel = (vis: number): { text: string; color: string } => {
-  if (vis > 0.7) return { text: 'Good', color: '#3F4826' };
-  if (vis > 0.4) return { text: 'Reduced', color: '#515C32' };
-  return { text: 'Poor', color: '#30371D' };
+  if (vis > 0.7) return { text: 'Good', color: '#A9C46C' };
+  if (vis > 0.4) return { text: 'Reduced', color: '#F5B416' };
+  if (vis > 0.2) return { text: 'Worse', color: '#FF7043' };
+  return { text: 'Blurred', color: '#8F1D14' };
 };
 
 const phaseLabel: Record<SimulationPhase, { text: string; color: string }> = {
@@ -46,6 +41,8 @@ export const StatusIndicators: React.FC<StatusIndicatorsProps> = ({
   const smoke = smokeLabel(smokeLevel);
   const vis = visLabel(visibility);
   const pLabel = phaseLabel[phase];
+  const minutes = Math.floor(elapsedTime / 60);
+  const seconds = elapsedTime % 60;
 
   return (
     <div className="glass-panel rounded-2xl p-5 w-full md:w-52 flex flex-col gap-4.5 border border-[#3F4826]/20 shadow-2xl backdrop-blur-xl">
@@ -69,8 +66,24 @@ export const StatusIndicators: React.FC<StatusIndicatorsProps> = ({
           <Clock className="w-3.5 h-3.5" />
           <span className="text-[10px] font-mono-data tracking-wider uppercase font-semibold">Time Elapsed</span>
         </div>
-        <div className="font-mono-data text-2xl font-bold text-[#F1F4F6] pl-5 tracking-tight">
-          {formatTime(elapsedTime)}
+        <div className="pl-5">
+          <span className="countdown font-mono-data text-2xl font-bold text-[#F1F4F6] tracking-tight">
+            <span
+              style={{ '--value': String(minutes).padStart(2, '0') } as React.CSSProperties}
+              aria-live="polite"
+              aria-label={String(minutes).padStart(2, '0')}
+            >
+              {String(minutes).padStart(2, '0')}
+            </span>
+            :
+            <span
+              style={{ '--value': String(seconds).padStart(2, '0'), '--digits': 2 } as React.CSSProperties}
+              aria-live="polite"
+              aria-label={String(seconds).padStart(2, '0')}
+            >
+              {String(seconds).padStart(2, '0')}
+            </span>
+          </span>
         </div>
       </div>
 

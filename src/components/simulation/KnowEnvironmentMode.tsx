@@ -31,15 +31,25 @@ export const KnowEnvironmentMode: React.FC<KnowEnvironmentModeProps> = ({
         </div>
 
         <div className="shrink-0 flex items-center justify-start md:justify-end">
-          <Button
-            variant="primary"
-            size="lg"
-            onClick={onStartSimulation}
-            icon={<ArrowRight className="w-5 h-5" />}
-            className="shadow-lg shadow-[#3F4826]/20 h-12 px-6"
-          >
-            START SIMULATION
-          </Button>
+          <div className="group relative">
+            <div
+              id="start-simulation-tooltip"
+              role="tooltip"
+              className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-3 -translate-x-1/2 whitespace-nowrap rounded-xl border border-[#A9C46C]/30 bg-[#18210F]/95 px-3 py-2 text-center opacity-0 shadow-lg shadow-[#3F4826]/20 transition-opacity duration-200 group-hover:opacity-100 group-focus-within:opacity-100"
+            >
+              <div className="-rotate-2 animate-bounce text-2xl font-black text-[#A9C46C]">Get Ready!</div>
+            </div>
+            <Button
+              variant="primary"
+              size="lg"
+              onClick={onStartSimulation}
+              icon={<ArrowRight className="w-5 h-5" />}
+              className="shadow-lg shadow-[#3F4826]/20 h-12 px-6"
+              aria-describedby="start-simulation-tooltip"
+            >
+              START SIMULATION
+            </Button>
+          </div>
         </div>
       </div>
 

@@ -12,6 +12,12 @@
     --grad-aqua: #515C32;
     --grad-amber: #F5B416;
     --grad-orange: #FF7043;
+
+    --olive-super-dark: #18210F;
+    --olive-deep: #2A3518;
+    --olive-base: #3F4826;
+    --olive-light: #A9C46C;
+    --olive-soft: #D4E7A3;
     
     --state-safe: #00E676;
     --state-normal: #3F4826;
@@ -205,4 +211,22 @@
   50% {
     opacity: 0.78;
   }
+}
+
+.countdown {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.18rem;
+  letter-spacing: 0.08em;
+  text-shadow: 0 0 18px rgba(169, 196, 108, 0.22);
+}
+
+.countdown > span {
+  display: inline-flex;
+  min-width: 2ch;
+  justify-content: center;
+  padding: 0.12rem 0.2rem;
+  border-radius: 0.4rem;
+  background: rgba(24, 33, 15, 0.55);
+  border: 1px solid rgba(169, 196, 108, 0.16);
 }

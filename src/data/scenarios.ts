@@ -8,7 +8,7 @@ export const SCENARIOS: ScenarioMeta[] = [
     difficulty: 'Beginner',
     duration: 'A few minutes',
     description: 'A fire breaks out in your kitchen. Learn spatial evacuation procedures and door safety.',
-    image: '/assets/apartment-fire.jpg',
+    image: '/assets/apartment-fire.png',
     isPlayable: true,
   },
   {

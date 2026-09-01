@@ -28,10 +28,10 @@ export const ScenarioCard: React.FC<ScenarioCardProps> = ({ scenario, onSelect }
 
   if (scenario.isPlayable) {
     return (
-      <div className="group relative rounded-2xl glass-panel-elevated border-2 border-[#3F4826] p-6 md:p-8 flex flex-col justify-between hover:border-[#515C32] transition-all duration-300 shadow-xl shadow-[#3F4826]/10 hover:shadow-[#3F4826]/25 hover:-translate-y-1">
+      <div className="group relative rounded-2xl glass-panel-elevated border-2 border-[#556B2F] p-6 md:p-8 flex flex-col justify-between hover:border-[#515C32] transition-all duration-300 shadow-xl shadow-[#3F4826]/10 hover:shadow-[#3F4826]/25 hover:-translate-y-1">
         {/* Available Badge */}
         <div className="flex items-center justify-between mb-4">
-          <span className="px-3 py-1 rounded-full bg-[#3F4826]/20 border border-[#3F4826]/40 text-[#3F4826] font-mono-data text-xs font-semibold tracking-wider">
+          <span className="px-3 py-1 rounded-full bg-[#2A3518]/45 border border-[#A9C46C]/35 text-[#A9C46C] font-mono-data text-xs font-semibold tracking-wider">
             AVAILABLE
           </span>
           <div className="flex items-center gap-3 text-xs font-mono-data text-[#7D8995]">
@@ -45,7 +45,7 @@ export const ScenarioCard: React.FC<ScenarioCardProps> = ({ scenario, onSelect }
         </div>
 
         {/* Thumbnail representation */}
-        <div className="w-full h-44 rounded-xl bg-gradient-to-br from-[#0B1016] via-[#10161D] to-[#FF7043]/20 relative overflow-hidden my-4 border border-[#3F4826]/30 flex items-center justify-center">
+        <div className="w-full h-44 rounded-xl bg-gradient-to-br from-[#18210F] via-[#10161D] to-[#FF7043]/20 relative overflow-hidden my-4 border border-[#556B2F]/40 flex items-center justify-center">
           <img
             src={scenario.image}
             alt={scenario.title}
@@ -63,7 +63,7 @@ export const ScenarioCard: React.FC<ScenarioCardProps> = ({ scenario, onSelect }
 
         {/* Info */}
         <div className="space-y-3 my-2">
-          <h3 className="font-display font-bold text-2xl text-[#F1F4F6] group-hover:text-[#3F4826] transition-colors">
+          <h3 className="font-display font-bold text-2xl text-[#F1F4F6] transition-colors">
             {scenario.title}
           </h3>
           <p className="text-sm text-[#7D8995] leading-relaxed">
@@ -89,7 +89,7 @@ export const ScenarioCard: React.FC<ScenarioCardProps> = ({ scenario, onSelect }
 
   // Locked Card representation
   return (
-    <div className="relative rounded-2xl bg-[#0B1016]/80 border border-[#7D8995]/20 p-6 md:p-8 flex flex-col justify-between opacity-75 backdrop-blur-sm">
+    <div className="relative rounded-2xl bg-[#18210F]/85 border border-[#2A3518]/70 p-6 md:p-8 flex flex-col justify-between opacity-75 backdrop-blur-sm">
       {/* Locked Overlay Badge */}
       <div className="flex items-center justify-between mb-4">
         <span className="px-3 py-1 rounded-full bg-[#10161D] border border-[#7D8995]/30 text-[#7D8995] font-mono-data text-xs font-medium tracking-wider flex items-center gap-1.5">

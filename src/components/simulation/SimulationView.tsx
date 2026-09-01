@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSimulationStore } from '../../stores/useSimulationStore';
 import { SimulationPhase } from '../../types/simulation';
@@ -10,11 +10,13 @@ import { KnowEnvironmentMode } from './KnowEnvironmentMode';
 import { DecisionModal } from './DecisionModal';
 import { ContextPanel } from './ContextPanel';
 import { PhoneCallUI } from './PhoneCallUI';
-import { ArrowLeft, Flame, MapPin, Play } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, CheckCircle2, Flame, MapPin, Play } from 'lucide-react';
 import Pixelcard from '@/components/originkit/ui/pixelcard';
 
 export const SimulationView: React.FC = () => {
   const navigate = useNavigate();
+  const [timeoutOpen, setTimeoutOpen] = useState(false);
+  const [phoneSuccessVisible, setPhoneSuccessVisible] = useState(false);
 
   // Zustand State
   const {
@@ -26,6 +28,7 @@ export const SimulationView: React.FC = () => {
     activeHotspotPanel,
     activeDecisionModalId,
     phoneCallActive,
+    phoneCallCompleted,
     setPhase,
     setSelectedRoom,
     setActiveHotspotPanel,
@@ -47,14 +50,85 @@ export const SimulationView: React.FC = () => {
     hallway: 'Hallway & Emergency Exit Corridor',
   };
 
+  const roomImages: Record<string, string> = {
+    overview: '/assets/rooms/overview.jpg',
+    living: '/assets/rooms/living-room.jpg',
+    kitchen: '/assets/rooms/kitchen.jpg',
+    bedroom: '/assets/rooms/bedroom.jpg',
+    bathroom: '/assets/rooms/bathroom.jpg',
+    hallway: '/assets/rooms/hallway.jpg',
+  };
+
   // Timer interval during non-explore phase
   useEffect(() => {
-    if (phase === SimulationPhase.EXPLORE || phase === SimulationPhase.COMPLETED) return;
+    if (phase === SimulationPhase.EXPLORE || phase === SimulationPhase.COMPLETED || timeoutOpen) return;
     const interval = setInterval(() => {
       tickTimer();
     }, 1000);
     return () => clearInterval(interval);
-  }, [phase, tickTimer]);
+  }, [phase, tickTimer, timeoutOpen]);
+
+  useEffect(() => {
+    if (elapsedTime >= 180 && phase !== SimulationPhase.EXPLORE && phase !== SimulationPhase.COMPLETED) {
+      setTimeoutOpen(true);
+    }
+  }, [elapsedTime, phase]);
+
+  useEffect(() => {
+    if (!phoneCallCompleted) return;
+
+    setPhoneSuccessVisible(true);
+    const dismissTimer = window.setTimeout(() => setPhoneSuccessVisible(false), 5000);
+    return () => window.clearTimeout(dismissTimer);
+  }, [phoneCallCompleted]);
+
+  useEffect(() => {
+    if (!timeoutOpen) return;
+
+    const AudioContextClass =
+      window.AudioContext ||
+      (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+
+    if (!AudioContextClass) return;
+
+    const audioContext = new AudioContextClass();
+    const gain = audioContext.createGain();
+    gain.gain.setValueAtTime(0.0001, audioContext.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.045, audioContext.currentTime + 0.03);
+    gain.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + 0.62);
+    gain.connect(audioContext.destination);
+
+    const playTone = (frequency: number, startOffset: number, duration: number) => {
+      const oscillator = audioContext.createOscillator();
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime + startOffset);
+      oscillator.connect(gain);
+      oscillator.start(audioContext.currentTime + startOffset);
+      oscillator.stop(audioContext.currentTime + startOffset + duration);
+    };
+
+    void audioContext.resume().then(() => {
+      playTone(660, 0, 0.18);
+      playTone(520, 0.25, 0.25);
+    }).catch(() => {
+      void audioContext.close();
+    });
+
+    return () => {
+      void audioContext.close();
+    };
+  }, [timeoutOpen]);
+
+  const handleRestartAfterTimeout = () => {
+    setTimeoutOpen(false);
+    resetSimulation();
+  };
+
+  const handleReturnHomeAfterTimeout = () => {
+    setTimeoutOpen(false);
+    resetSimulation();
+    navigate('/');
+  };
 
   // Handle Hotspot Click
   const handleHotspotClick = (id: string) => {
@@ -138,6 +212,52 @@ export const SimulationView: React.FC = () => {
 
       {/* 2. MAIN VIEWPORT & OVERVIEW AREA */}
       <main className="flex-1 relative w-full h-[calc(100vh-80px)] flex items-center justify-center overflow-hidden p-6 md:p-10">
+        {phoneSuccessVisible && (
+          <div
+            role="alert"
+            className="fixed right-4 top-24 z-[60] flex w-[min(22rem,calc(100%-2rem))] items-center gap-3 rounded-xl border border-[#A9C46C]/40 bg-[#2A3518]/95 px-4 py-3 text-sm text-[#D4E7A3] shadow-2xl shadow-black/40 backdrop-blur-md"
+          >
+            <CheckCircle2 className="h-5 w-5 shrink-0 text-[#A9C46C]" />
+            <span>Good Job! A call can save your life in unexpected ways</span>
+          </div>
+        )}
+
+        {timeoutOpen && (
+          <div
+            className="absolute inset-0 z-50 flex items-center justify-center bg-[#050608]/85 p-4 backdrop-blur-md"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="simulation-timeout-title"
+          >
+            <div className="w-full max-w-md rounded-3xl border border-[#FF7043]/40 bg-[#0B1016]/95 p-7 text-center shadow-2xl shadow-black/50">
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-[#FF7043]/40 bg-[#FF7043]/10 text-[#FF7043]">
+                <AlertTriangle className="h-7 w-7 animate-pulse" />
+              </div>
+              <h2 id="simulation-timeout-title" className="font-display text-xl font-bold tracking-wide text-[#F1F4F6]">
+                TIME LIMIT REACHED
+              </h2>
+              <p className="mt-3 text-sm leading-relaxed text-[#7D8995]">
+                It is dangerous to be that long in such situations. Better improve your reaction time!
+              </p>
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
+                <button
+                  type="button"
+                  onClick={handleRestartAfterTimeout}
+                  className="rounded-xl border border-[#515C32] bg-[#3F4826] px-5 py-3 font-mono-data text-xs font-semibold text-white transition-colors hover:bg-[#515C32]"
+                >
+                  RESTART SIMULATION
+                </button>
+                <button
+                  type="button"
+                  onClick={handleReturnHomeAfterTimeout}
+                  className="rounded-xl border border-[#7D8995]/30 bg-[#10161D] px-5 py-3 font-mono-data text-xs font-semibold text-[#F1F4F6] transition-colors hover:border-[#7D8995]/60"
+                >
+                  RETURN TO HOME
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
         {phase !== SimulationPhase.EXPLORE && phase !== SimulationPhase.COMPLETED && (
           <div
             className="absolute top-4 left-1/2 -translate-x-1/2 z-20 max-w-[calc(100%-2rem)] rounded-full border border-[#F5B416]/25 bg-[#10161D]/90 px-3.5 py-1.5 text-center text-[10px] sm:text-xs font-mono-data text-[#F5B416] shadow-lg shadow-[#F5B416]/10 backdrop-blur-md motion-safe:animate-[instruction-pulse_3.5s_ease-in-out_infinite]"
@@ -164,6 +284,16 @@ export const SimulationView: React.FC = () => {
 
           {/* Central 3D Viewing Container */}
           <div className="relative w-[92%] max-w-5xl h-[72%] rounded-3xl border border-[#3F4826]/20 bg-[#0B1016]/80 flex flex-col items-center justify-center p-8 text-center shadow-2xl overflow-hidden">
+            {/* Blurred room reference image changes with the room navigation tabs */}
+            <img
+              key={selectedRoom}
+              src={roomImages[selectedRoom] || roomImages.overview}
+              alt=""
+              aria-hidden="true"
+              className="absolute inset-0 z-0 h-full w-full scale-105 object-cover blur-md opacity-25 transition-all duration-700 pointer-events-none"
+            />
+            <div className="absolute inset-0 z-[1] bg-[#050608]/55 pointer-events-none" />
+
             {/* Pixelcard Background Effect (Active simulation only) */}
             {phase !== SimulationPhase.EXPLORE && (
               <div className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }}>
