@@ -56,7 +56,7 @@ export const ScenarioCard: React.FC<ScenarioCardProps> = ({ scenario, onSelect }
             }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#10161D] via-transparent to-transparent" />
-          <div className="absolute p-4 rounded-2xl bg-[#050608]/80 border border-[#FF7043]/40 backdrop-blur-md">
+          <div className="absolute p-4 rounded-2xl bg-[#050608]/80 border border-[#FF7043]/40">
             {getIcon(scenario.id)}
           </div>
         </div>
