@@ -1,5 +1,7 @@
 import { ScenarioMeta } from '../types/education';
 
+const assetUrl = (path: string) => `${import.meta.env.BASE_URL}${path}`;
+
 export const SCENARIOS: ScenarioMeta[] = [
   {
     id: 'fire',
@@ -8,7 +10,7 @@ export const SCENARIOS: ScenarioMeta[] = [
     difficulty: 'Beginner',
     duration: 'A few minutes',
     description: 'A fire breaks out in your kitchen. Learn spatial evacuation procedures and door safety.',
-    image: '/assets/apartment-fire.png',
+    image: assetUrl('assets/apartment-fire.png'),
     isPlayable: true,
   },
   {
@@ -18,7 +20,7 @@ export const SCENARIOS: ScenarioMeta[] = [
     difficulty: 'Intermediate',
     duration: 'A few minutes',
     description: 'Rapidly rising water threatens a urban residence. Learn vertical shelter decisions.',
-    image: '/assets/reference/scenario-reference.png',
+    image: assetUrl('assets/reference/scenario-reference.png'),
     isPlayable: false,
   },
   {
@@ -28,7 +30,7 @@ export const SCENARIOS: ScenarioMeta[] = [
     difficulty: 'Intermediate',
     duration: 'A few minutes',
     description: 'A tornado alert is issued. Find structural safety in interior reinforced spaces.',
-    image: '/assets/reference/hero-reference.png',
+    image: assetUrl('assets/reference/hero-reference.png'),
     isPlayable: false,
   },
   {
@@ -38,7 +40,7 @@ export const SCENARIOS: ScenarioMeta[] = [
     difficulty: 'Beginner',
     duration: 'A few minutes',
     description: 'Power grid spark failure in residential wiring. Identify electrical isolation steps.',
-    image: '/assets/reference/scenario-reference.png',
+    image: assetUrl('assets/reference/scenario-reference.png'),
     isPlayable: false,
   },
   {
@@ -48,7 +50,7 @@ export const SCENARIOS: ScenarioMeta[] = [
     difficulty: 'Advanced',
     duration: 'A few minutes',
     description: 'Coordinate clear assembly navigation across multi-wing educational facilities.',
-    image: '/assets/reference/hero-reference.png',
+    image: assetUrl('assets/reference/hero-reference.png'),
     isPlayable: false,
   },
 ];

@@ -51,12 +51,12 @@ export const SimulationView: React.FC = () => {
   };
 
   const roomImages: Record<string, string> = {
-    overview: '/assets/rooms/overview.jpg',
-    living: '/assets/rooms/living-room.jpg',
-    kitchen: '/assets/rooms/kitchen.jpg',
-    bedroom: '/assets/rooms/bedroom.jpg',
-    bathroom: '/assets/rooms/bathroom.jpg',
-    hallway: '/assets/rooms/hallway.jpg',
+    overview: `${import.meta.env.BASE_URL}assets/rooms/overview.jpg`,
+    living: `${import.meta.env.BASE_URL}assets/rooms/living-room.jpg`,
+    kitchen: `${import.meta.env.BASE_URL}assets/rooms/kitchen.jpg`,
+    bedroom: `${import.meta.env.BASE_URL}assets/rooms/bedroom.jpg`,
+    bathroom: `${import.meta.env.BASE_URL}assets/rooms/bathroom.jpg`,
+    hallway: `${import.meta.env.BASE_URL}assets/rooms/hallway.jpg`,
   };
 
   // Timer interval during non-explore phase
